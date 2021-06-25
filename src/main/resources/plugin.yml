@@ -1,0 +1,11 @@
+name: CustomPractice
+version: ${project.version}
+main: com.customwrld.custompractice.CustomPractice
+api-version: 1.16
+authors: [ FreakingChicken ]
+description: Practice for CustomWRLD
+depend:
+  - CustomLib
+  - CommandAPI
+  - FastAsyncWorldEdit
+  - PlaceholderAPI
