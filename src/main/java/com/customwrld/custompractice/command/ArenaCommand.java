@@ -8,6 +8,7 @@ import com.customwrld.custompractice.kit.Kit;
 import com.customwrld.custompractice.managers.ArenaManager;
 import com.customwrld.custompractice.managers.KitManager;
 import com.customwrld.custompractice.util.WorldUtil;
+import com.mongodb.client.model.Filters;
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.regions.Region;
 import dev.jorel.commandapi.CommandAPICommand;
@@ -17,6 +18,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -36,7 +38,8 @@ public class ArenaCommand {
                 .withSubcommand(setRegion)
                 .withSubcommand(listLocked)
                 .withSubcommand(lock)
-                .withSubcommand(unlock);
+                .withSubcommand(unlock)
+                .withSubcommand(delete);
     }
 
     public static CommandAPICommand create = new CommandAPICommand("create")
@@ -65,6 +68,7 @@ public class ArenaCommand {
                     for (Map.Entry<String, List<Arena>> entry : arenaManager.getArenas().entrySet()) {
                         sender.sendMessage(entry.getKey() + " | " + entry.getValue().size());
                     }
+                    return;
                 }
                 for (Arena arena : arenaManager.getArenas().get((String) args[0])) {
                     Component message = Component.text(arena.getUuid().toString()).clickEvent(ClickEvent.copyToClipboard(arena.getUuid().toString()));
@@ -183,6 +187,7 @@ public class ArenaCommand {
                 }
                 arena.setCuboid(new Cuboid(new Location(WorldUtil.WORLD, region.getMinimumPoint().getBlockX(), region.getMinimumPoint().getBlockY(), region.getMinimumPoint().getBlockZ()),
                         new Location(WorldUtil.WORLD, region.getMaximumPoint().getBlockX(), region.getMaximumPoint().getBlockY(), region.getMaximumPoint().getBlockZ())));
+                WorldUtil.saveSchematic(WorldUtil.WORLD, Bukkit.getPluginManager().getPlugin("WorldEdit").getDataFolder(),"schematics/" + arena.getName() +".schem", arena.getCuboid());
                 arenaManager.save(arena);
                 sender.sendMessage(Component.text("Region has beeen successfully updated!").color(MC.CC.GREEN.getTextColor()));
             });
@@ -236,5 +241,27 @@ public class ArenaCommand {
                     }
                 }
                 sender.sendMessage(Component.text("Please enter a valid kit!").color(MC.CC.RED.getTextColor()));
+            });
+
+    public static CommandAPICommand delete = new CommandAPICommand("delete")
+            .withPermission("custompractice.admin")
+            .withArguments(new UUIDArgument("uuid"))
+            .executesPlayer((sender, args) -> {
+                ArenaManager arenaManager = CustomPractice.getManagerHandler().getArenaManager();
+                Arena arena = null;
+                for (List<Arena> arenaList : arenaManager.getArenas().values()) {
+                    for (final var it = arenaList.iterator(); it.hasNext();) {
+                        var arena1 = it.next();
+                        if (arena1.getUuid().equals(args[0])) {
+                            arena = arena1;
+                            it.remove();
+                        }
+                    }
+                }
+                if (arena == null) {
+                    sender.sendMessage(Component.text("Could not locate the arena you provided, please check the uuid").color(MC.CC.RED.getTextColor()));
+                    return;
+                }
+                arenaManager.getArenaCollection().deleteOne(Filters.eq(arena.getId()));
             });
 }

@@ -441,6 +441,10 @@ public class Duel {
                 }
             }
         }
+        /*
+        if (CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isModifyTerrain()) {
+            WorldEditUtil.pasteSchematic();
+        }*/
         if (clipboard != null && CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isModifyTerrain()) {
             try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(WorldUtil.WORLD), -1)) {
                 Operation operation = new ClipboardHolder(clipboard)

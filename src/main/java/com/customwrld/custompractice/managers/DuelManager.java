@@ -35,25 +35,28 @@ public class DuelManager extends Manager {
         Player A = Bukkit.getPlayer(playerA.getUuid());
         Player B = Bukkit.getPlayer(playerA.getUuid());
         if (arena == null) {
-            if (A != null) {
-                A.sendMessage(Component.text("There are no available arenas, please wait for one to be open and tell staff to make more.").color(MC.CC.RED.getTextColor()));
-                Queue queue = queueManager.getQueue(playerA);
-                queue.removeFromQueue(playerA);
-                playerA.setState(PracticePlayer.State.LOBBY);
-                PlayerUtil.resetPlayer(A);
-                ItemUtil.setDefaultLoadout(A);
-                A.sendMessage(Component.text("You have left the queue!").color(MC.CC.RED.getTextColor()));
+            arena = CustomPractice.getManagerHandler().getArenaManager().stackRandomArena();
+            if (arena == null) {
+                if (A != null) {
+                    A.sendMessage(Component.text("There are no available arenas, please wait for one to be open and tell staff to make more.").color(MC.CC.RED.getTextColor()));
+                    Queue queue = queueManager.getQueue(playerA);
+                    queue.removeFromQueue(playerA);
+                    playerA.setState(PracticePlayer.State.LOBBY);
+                    PlayerUtil.resetPlayer(A);
+                    ItemUtil.setDefaultLoadout(A);
+                    A.sendMessage(Component.text("You have left the queue!").color(MC.CC.RED.getTextColor()));
+                }
+                if (B != null) {
+                    B.sendMessage(Component.text("There are no available arenas, please wait for one to be open and tell staff to make more.").color(MC.CC.RED.getTextColor()));
+                    Queue queue = queueManager.getQueue(playerB);
+                    queue.removeFromQueue(playerB);
+                    playerB.setState(PracticePlayer.State.LOBBY);
+                    PlayerUtil.resetPlayer(B);
+                    ItemUtil.setDefaultLoadout(B);
+                    B.sendMessage(Component.text("You have left the queue!").color(MC.CC.RED.getTextColor()));
+                }
+                return;
             }
-            if (B != null) {
-                B.sendMessage(Component.text("There are no available arenas, please wait for one to be open and tell staff to make more.").color(MC.CC.RED.getTextColor()));
-                Queue queue = queueManager.getQueue(playerB);
-                queue.removeFromQueue(playerB);
-                playerB.setState(PracticePlayer.State.LOBBY);
-                PlayerUtil.resetPlayer(B);
-                ItemUtil.setDefaultLoadout(B);
-                B.sendMessage(Component.text("You have left the queue!").color(MC.CC.RED.getTextColor()));
-            }
-            return;
         }
         Duel duel = new Duel(arena,
                 request.getKit(),
