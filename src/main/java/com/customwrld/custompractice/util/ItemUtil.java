@@ -1,7 +1,7 @@
 package com.customwrld.custompractice.util;
 
 import com.customwrld.customlib.util.ItemFactory;
-import com.customwrld.customlib.util.MC;
+import com.customwrld.commonlib.util.MC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;

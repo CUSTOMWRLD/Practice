@@ -6,6 +6,7 @@ import com.customwrld.custompractice.command.*;
 import com.customwrld.custompractice.duel.Duel;
 import com.customwrld.custompractice.event.Event;
 import com.customwrld.custompractice.events.BlockEvents;
+import com.customwrld.custompractice.events.EntityEvents;
 import com.customwrld.custompractice.events.InventoryEvents;
 import com.customwrld.custompractice.events.PlayerEvents;
 import com.customwrld.custompractice.kit.Kit;
@@ -60,7 +61,8 @@ public final class CustomPractice extends JavaPlugin {
         Arrays.asList(
                 new PlayerEvents(),
                 new BlockEvents(),
-                new InventoryEvents()
+                new InventoryEvents(),
+                new EntityEvents()
         ).forEach(events -> {
             Bukkit.getPluginManager().registerEvents(events, this);
         });

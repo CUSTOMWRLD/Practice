@@ -13,8 +13,10 @@ import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
@@ -68,15 +70,22 @@ public class PlayerEvents implements Listener {
             CustomPractice.getManagerHandler().getQueueManager().getRankedQueue().forEach((s, queue) -> {
                 queue.removeFromQueue(practicePlayer);
             });
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (Bukkit.getPlayer(practicePlayer.getUuid()) == null) {
-                        CustomPractice.getManagerHandler().getPracticePlayerManager().save(practicePlayer);
-                        CustomPractice.getManagerHandler().getPracticePlayerManager().getPlayers().remove(practicePlayer);
+            try {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (Bukkit.getPlayer(practicePlayer.getUuid()) == null) {
+                            CustomPractice.getManagerHandler().getPracticePlayerManager().save(practicePlayer);
+                            CustomPractice.getManagerHandler().getPracticePlayerManager().getPlayers().remove(practicePlayer);
+                        }
                     }
+                }.runTaskLater(CustomPractice.getCustomPractice(), 20L + 10);
+            } catch (Exception e) {
+                if (Bukkit.getPlayer(practicePlayer.getUuid()) == null) {
+                    CustomPractice.getManagerHandler().getPracticePlayerManager().save(practicePlayer);
+                    CustomPractice.getManagerHandler().getPracticePlayerManager().getPlayers().remove(practicePlayer);
                 }
-            }.runTaskLater(CustomPractice.getCustomPractice(), 20L + 10);
+            }
         }
     }
 
@@ -104,6 +113,39 @@ public class PlayerEvents implements Listener {
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
+        DuelManager duelManager = CustomPractice.getManagerHandler().getDuelManager();
+        KitManager kitManager = CustomPractice.getManagerHandler().getKitManager();
+        if (practicePlayer.getState() == PracticePlayer.State.FIGHTING) {
+            if (duelManager.getActiveDuels().containsKey(duelManager.getPlayerToDuel().get(player.getUniqueId()))) {
+                Duel duel = duelManager.getActiveDuels().get(duelManager.getPlayerToDuel().get(player.getUniqueId()));
+                if (kitManager.getKits().get(duel.getKit()).isSumo()) {
+                    if (duel.getState() == Duel.State.WAITING) {
+                        if (event.getTo().getX() != event.getFrom().getX() || event.getTo().getZ() != event.getFrom().getZ()) {
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+                }
+                if (event.getTo().getBlock().getType() == Material.WATER) {
+                    if (kitManager.getKits().get(duel.getKit()).isSpleef() || kitManager.getKits().get(duel.getKit()).isSumo()) {
+                        if (duel.getTeamAAlive().contains(player.getUniqueId())) {
+                            if (duel.getState() != Duel.State.ENDED) {
+                                player.getWorld().strikeLightningEffect(player.getLocation());
+                                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 1, 1);
+                            }
+                            duel.killPlayerTeamA(player.getName(), player.getUniqueId(), player, practicePlayer, null);
+                        }
+                        if (duel.getTeamBAlive().contains(player.getUniqueId())) {
+                            if (duel.getState() != Duel.State.ENDED) {
+                                player.getWorld().strikeLightningEffect(player.getLocation());
+                                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 1, 1);
+                            }
+                            duel.killPlayerTeamB(player.getName(), player.getUniqueId(), player, practicePlayer, null);
+                        }
+                    }
+                }
+            }
+        }
         if (event.getTo().getY() < 0) {
             if (practicePlayer.getState() != PracticePlayer.State.FIGHTING) {
                 player.setFallDistance(0);
@@ -128,6 +170,16 @@ public class PlayerEvents implements Listener {
             }*/
             if (practicePlayer.getState() != PracticePlayer.State.FIGHTING) {
                 event.setCancelled(true);
+                return;
+            }
+            DuelManager duelManager = CustomPractice.getManagerHandler().getDuelManager();
+            KitManager kitManager = CustomPractice.getManagerHandler().getKitManager();
+            assert player != null;
+            if (duelManager.getActiveDuels().containsKey(duelManager.getPlayerToDuel().get(player.getUniqueId()))) {
+                Duel duel = duelManager.getActiveDuels().get(duelManager.getPlayerToDuel().get(player.getUniqueId()));
+                if (kitManager.getKits().get(duel.getKit()).isSumo() || kitManager.getKits().get(duel.getKit()).isSpleef()) {
+                    event.setDamage(0);
+                }
             }
         }
     }
@@ -157,10 +209,9 @@ public class PlayerEvents implements Listener {
                 KitManager kitManager = CustomPractice.getManagerHandler().getKitManager();
                 if (kitManager.getKits().containsKey(duel.getKit())) {
                     Kit kit = kitManager.getKits().get(duel.getKit());
-                    if (kit.isCombo()) {
-                        player.setNoDamageTicks(0);
-                        if (player.getActiveItem() != null) {
-                            player.setCooldown(player.getActiveItem().getType(), 0);
+                    if (kit.isSpleef()) {
+                        if (!(event.getDamager() instanceof Projectile)) {
+                            event.setCancelled(true);
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 package com.customwrld.custompractice.events;
 
 import com.customwrld.customlib.util.InventoryUtil;
-import com.customwrld.customlib.util.MC;
+import com.customwrld.commonlib.util.MC;
 import com.customwrld.customlib.util.ServerUtil;
 import com.customwrld.custompractice.CustomPractice;
 import com.customwrld.custompractice.duel.Duel;

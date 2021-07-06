@@ -1,7 +1,7 @@
 package com.customwrld.custompractice.managers;
 
 import com.customwrld.customlib.util.InventoryUtil;
-import com.customwrld.customlib.util.MC;
+import com.customwrld.commonlib.util.MC;
 import com.customwrld.custompractice.CustomPractice;
 import com.customwrld.custompractice.kit.Kit;
 import com.customwrld.custompractice.util.ItemUtil;
@@ -43,7 +43,9 @@ public class KitManager extends Manager {
                         Updates.set("modifyTerrain", kit.isModifyTerrain()),
                         Updates.set("ranked", kit.isRanked()),
                         Updates.set("contents", InventoryUtil.itemStackArrayToBase64(kit.getContents())),
-                        Updates.set("lockedArenas", kit.getLockedArenas())
+                        Updates.set("lockedArenas", kit.getLockedArenas()),
+                        Updates.set("sumo", kit.isSumo()),
+                        Updates.set("spleef", kit.isSpleef())
                 ), new UpdateOptions().upsert(true));
     }
 

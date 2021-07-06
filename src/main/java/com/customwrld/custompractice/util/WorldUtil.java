@@ -14,6 +14,7 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
+import java.util.logging.Level;
 
 public class WorldUtil {
 
@@ -40,6 +42,11 @@ public class WorldUtil {
     public static void pasteSchematicAt(World world, File folder, String child, Location location) {
         File file = new File(folder, child);
 
+        if (!file.exists()) {
+            Bukkit.getLogger().log(Level.SEVERE, "The schematic " + child + " could not be located, please make sure it exists!");
+            return;
+        }
+
         try {
             Clipboard clipboard;
             ClipboardFormat format = ClipboardFormats.findByFile(file);
@@ -48,6 +55,8 @@ public class WorldUtil {
             try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
                 clipboard = reader.read();
             }
+
+            System.out.println(location);
 
             try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
                 Operation operation = new ClipboardHolder(clipboard)

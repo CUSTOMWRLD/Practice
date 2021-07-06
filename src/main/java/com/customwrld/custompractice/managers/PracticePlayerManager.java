@@ -1,6 +1,6 @@
 package com.customwrld.custompractice.managers;
 
-import com.customwrld.customlib.util.MC;
+import com.customwrld.commonlib.util.MC;
 import com.customwrld.custompractice.CustomPractice;
 import com.customwrld.custompractice.duel.Request;
 import com.customwrld.custompractice.player.PracticePlayer;

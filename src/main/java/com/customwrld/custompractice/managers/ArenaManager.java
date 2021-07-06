@@ -1,25 +1,16 @@
 package com.customwrld.custompractice.managers;
 
 import com.customwrld.customlib.util.Cuboid;
-import com.customwrld.customlib.util.WorldEditUtil;
 import com.customwrld.custompractice.CustomPractice;
 import com.customwrld.custompractice.arena.Arena;
-import com.customwrld.custompractice.duel.Duel;
+import com.customwrld.custompractice.kit.Kit;
 import com.customwrld.custompractice.util.WorldUtil;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
-import com.sk89q.worldedit.function.operation.Operations;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -70,9 +61,13 @@ public class ArenaManager extends Manager {
     }
 
     public Arena getRandomArena(String kit) {
-        List<Arena> arenaList = arenas.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-        Arena arena = arenaList.get(ThreadLocalRandom.current().nextInt(arenaList.size()));
+        List<Arena> arenaList = arenas.values().stream().flatMap(Collection::stream).filter(arena -> !arena.isInUse()).collect(Collectors.toList());
         KitManager kitManager = CustomPractice.getManagerHandler().getKitManager();
+        Kit kit1 = kitManager.getKits().get(kit);
+        if (!kit1.getLockedArenas().isEmpty()) {
+            arenaList = arenaList.stream().filter(arena -> kit1.getLockedArenas().contains(arena.getName())).collect(Collectors.toList());
+        }
+        Arena arena = arenaList.get(ThreadLocalRandom.current().nextInt(arenaList.size()));
         for (int i = 0; i < 20; i++) {
             if (arena.getLockedKits().isEmpty() || arena.getLockedKits().contains(kit)) {
                 if (kitManager.getKits().get(kit).getLockedArenas().isEmpty() || kitManager.getKits().get(kit).getLockedArenas().contains(arena.getName())) {
@@ -80,6 +75,17 @@ public class ArenaManager extends Manager {
                         arena.setInUse(true);
                         return arena;
                     }
+                }
+            }
+        }
+        return null;
+    }
+
+    public Arena uuidToArena(UUID uuid) {
+        for (List<Arena> arenaList : arenas.values()) {
+            for (Arena arena : arenaList) {
+                if (arena.getUuid().equals(uuid)) {
+                    return arena;
                 }
             }
         }
@@ -142,6 +148,40 @@ public class ArenaManager extends Manager {
             e.printStackTrace();
             return null;
         }*/
+        CustomPractice.getManagerHandler().getArenaManager().save(arena1);
+        return arena1;
+    }
+
+    public Arena stackArena(Arena arena, int i) {
+        if (arena == null) {
+            return null;
+        }
+        for (List<Arena> arenaList : arenas.values()) {
+            for (Arena arena1 : arenaList) {
+                if (arena1.getCuboid() != null) {
+                    if (arena1.getCuboid().contains(arena.getTeamALocation().clone().add(500 * i, 0, 0)) || arena1.getCuboid().contains(arena.getTeamBLocation().clone().add(500 * i, 0, 0))) {
+                        return null;
+                    }
+                }
+            }
+        }
+        Arena arena1 = new Arena(arena.getName(), arena.getTeamALocation().clone().add(500 * i, 0, 0), arena.getTeamBLocation().clone().add(500 * i, 0, 0));
+        arena1.setCuboid(arena.getCuboid().clone().shift(Cuboid.CuboidDirection.SOUTH, 500 * i));
+        arena1.setLockedKits(new ArrayList<>(arena.getLockedKits()));
+        arena1.setEnabled(arena.isEnabled());
+
+        Chunk chunk = WorldUtil.WORLD.getChunkAt(arena1.getCuboid().getCenter());
+        for (int x = chunk.getX() - 10; x < chunk.getX() + 10; x++) {
+            for (int z = chunk.getZ() - 10; z < chunk.getZ() + 10; z++) {
+                Chunk chunk1 = WorldUtil.WORLD.getChunkAt(x, z);
+                if (!WorldUtil.WORLD.isChunkLoaded(chunk1)) {
+                    WorldUtil.WORLD.loadChunk(chunk1);
+                }
+            }
+        }
+
+        WorldUtil.pasteSchematicAt(WorldUtil.WORLD, Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("WorldEdit")).getDataFolder(), "schematics/" + arena.getName() +".schem", arena1.getCuboid().getLowerNE());
+
         CustomPractice.getManagerHandler().getArenaManager().save(arena1);
         return arena1;
     }

@@ -1,6 +1,6 @@
 package com.customwrld.custompractice.queue;
 
-import com.customwrld.customlib.util.MC;
+import com.customwrld.commonlib.util.MC;
 import com.customwrld.custompractice.CustomPractice;
 import com.customwrld.custompractice.duel.Request;
 import com.customwrld.custompractice.kit.Kit;

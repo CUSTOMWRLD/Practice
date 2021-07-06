@@ -35,6 +35,10 @@ public class Kit implements ConfigurationSerializable {
 
     @Getter private List<String> lockedArenas;
 
+    @Getter @Setter private boolean sumo;
+
+    @Getter @Setter private boolean spleef;
+
     public Kit(String name, ItemStack icon, boolean combo, boolean modifyTerrain, boolean ranked, ItemStack[] contents, boolean custom) {
         this.id = new ObjectId();
         this.enabled = false;
@@ -60,6 +64,8 @@ public class Kit implements ConfigurationSerializable {
             this.ranked = document.getBoolean("ranked");
             this.contents = InventoryUtil.itemStackArrayFromBase64(document.getString("contents"));
             this.lockedArenas = Optional.ofNullable(document.getList("lockedArenas", String.class)).orElse(new ArrayList<>());
+            this.sumo = Optional.ofNullable(document.getBoolean("sumo")).orElse(false);
+            this.spleef = Optional.ofNullable(document.getBoolean("spleef")).orElse(false);
         } catch (NullPointerException | IOException e) {
             e.printStackTrace();
         }
@@ -92,6 +98,8 @@ public class Kit implements ConfigurationSerializable {
         data.put("ranked", this.ranked);
         data.put("contents", InventoryUtil.itemStackArrayToBase64(this.contents));
         data.put("lockedArenas", this.lockedArenas);
+        data.put("sumo", this.sumo);
+        data.put("spleef", this.spleef);
         return data;
     }
 }

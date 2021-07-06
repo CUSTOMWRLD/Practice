@@ -1,7 +1,7 @@
 package com.customwrld.custompractice.command;
 
 import com.customwrld.customlib.util.Cuboid;
-import com.customwrld.customlib.util.MC;
+import com.customwrld.commonlib.util.MC;
 import com.customwrld.custompractice.CustomPractice;
 import com.customwrld.custompractice.arena.Arena;
 import com.customwrld.custompractice.kit.Kit;
@@ -12,6 +12,7 @@ import com.mongodb.client.model.Filters;
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.regions.Region;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.arguments.UUIDArgument;
 import net.kyori.adventure.text.Component;
@@ -24,6 +25,7 @@ import org.bukkit.Location;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ArenaCommand {
 
@@ -39,7 +41,9 @@ public class ArenaCommand {
                 .withSubcommand(listLocked)
                 .withSubcommand(lock)
                 .withSubcommand(unlock)
-                .withSubcommand(delete);
+                .withSubcommand(delete)
+                .withSubcommand(deleteall)
+                .withSubcommand(stack);
     }
 
     public static CommandAPICommand create = new CommandAPICommand("create")
@@ -50,6 +54,7 @@ public class ArenaCommand {
                 ArenaManager arenaManager = CustomPractice.getManagerHandler().getArenaManager();
                 if (!arenaManager.getArenas().containsKey(arena.getName())) {
                     arenaManager.getArenas().put(arena.getName(), new ArrayList<>());
+                    arenaManager.getArenas().get(arena.getName()).add(arena);
                 } else {
                     arenaManager.getArenas().get(arena.getName()).add(arena);
                     arena.setLockedKits(new ArrayList<>(arenaManager.getArenas().get(arena.getName()).get(0).getLockedKits()));
@@ -74,11 +79,11 @@ public class ArenaCommand {
                     Component message = Component.text(arena.getUuid().toString()).clickEvent(ClickEvent.copyToClipboard(arena.getUuid().toString()));
                     Component message1 = Component.text("Click to teleport");
                     if (arena.getTeamALocation() != null) {
-                        message1.hoverEvent(HoverEvent.showText(Component.text("Teleport to Team A spawn").color(TextColor.color(0,0,255))));
-                        message1.clickEvent(ClickEvent.runCommand("/tp " + arena.getTeamALocation().getBlockX() + " " + arena.getTeamALocation().getBlockY() + " " + arena.getTeamALocation().getBlockZ()));
+                        message1 = message1.hoverEvent(HoverEvent.showText(Component.text("Teleport to Team A spawn").color(TextColor.color(0,0,255))));
+                        message1 = message1.clickEvent(ClickEvent.runCommand("/tp " + arena.getTeamALocation().getBlockX() + " " + arena.getTeamALocation().getBlockY() + " " + arena.getTeamALocation().getBlockZ()));
                     } else if (arena.getTeamBLocation() != null) {
-                        message1.hoverEvent(HoverEvent.showText(Component.text("Teleport to Team B spawn").color(TextColor.color(0,0,255))));
-                        message1.clickEvent(ClickEvent.runCommand("/tp " + arena.getTeamBLocation().getBlockX() + " " + arena.getTeamBLocation().getBlockY() + " " + arena.getTeamBLocation().getBlockZ()));
+                        message1 = message1.hoverEvent(HoverEvent.showText(Component.text("Teleport to Team B spawn").color(TextColor.color(0,0,255))));
+                        message1 = message1.clickEvent(ClickEvent.runCommand("/tp " + arena.getTeamBLocation().getBlockX() + " " + arena.getTeamBLocation().getBlockY() + " " + arena.getTeamBLocation().getBlockZ()));
                     }
                     sender.sendMessage(message);
                     sender.sendMessage(message1);
@@ -263,5 +268,50 @@ public class ArenaCommand {
                     return;
                 }
                 arenaManager.getArenaCollection().deleteOne(Filters.eq(arena.getId()));
+            });
+
+    public static CommandAPICommand deleteall = new CommandAPICommand("deleteall")
+            .withPermission("custompractice.admin")
+            .withArguments(new StringArgument("name"))
+            .executesPlayer((sender, args) -> {
+                ArenaManager arenaManager = CustomPractice.getManagerHandler().getArenaManager();
+                if (arenaManager.getArenas().containsKey((String) args[0])) {
+                    for (Arena arena : arenaManager.getArenas().get((String) args[0])) {
+                        arenaManager.getArenaCollection().deleteOne(Filters.eq(arena.getId()));
+                    }
+                    arenaManager.getArenas().remove((String) args[0]);
+                }
+            });
+
+    public static CommandAPICommand stack = new CommandAPICommand("stack")
+            .withPermission("custompractice.admin")
+            .withArguments(new UUIDArgument("uuid"))
+            .withArguments(new IntegerArgument("amount"))
+            .executesPlayer((sender, args) -> {
+                ArenaManager arenaManager = CustomPractice.getManagerHandler().getArenaManager();
+                Arena arena = null;
+                for (List<Arena> arenaList : arenaManager.getArenas().values()) {
+                    for (Arena arena1 : arenaList) {
+                        if (arena1.getUuid().equals(args[0])) {
+                            arena = arena1;
+                        }
+                    }
+                }
+                if (arena == null) {
+                    sender.sendMessage(Component.text("Could not locate the arena you provided, please check the uuid").color(MC.CC.RED.getTextColor()));
+                    return;
+                }
+                for (int i = 0; i < (int) args[1]; i++) {
+                    Arena arena1 = CustomPractice.getManagerHandler().getArenaManager().stackArena(arena, i + 1);
+                    if (arena1 == null) {
+                        sender.sendMessage(Component.text("There was an error stacking the arena, there might not be enough room to stack it, try a different arena.").color(MC.CC.RED.getTextColor()));
+                        sender.sendMessage(Component.text("A total of " + i + " " + arena.getName() + " arenas were created successfully.").color(MC.CC.GREEN.getTextColor()));
+                        return;
+                    }
+                    arenaManager.getArenas().get(arena1.getName()).add(arena1);
+                    arenaManager.save(arena1);
+                    sender.sendMessage(Component.text("Arena " + arena1.getUuid().toString() + " created and saved successfully. (" + i + "/" + args[1] + ")").color(MC.CC.GREEN.getTextColor()));
+                }
+                sender.sendMessage(Component.text("A total of " + args[1] + " " + arena.getName() + " arenas were created successfully.").color(MC.CC.GREEN.getTextColor()));
             });
 }

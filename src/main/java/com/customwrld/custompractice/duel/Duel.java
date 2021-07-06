@@ -1,6 +1,6 @@
 package com.customwrld.custompractice.duel;
 
-import com.customwrld.customlib.util.MC;
+import com.customwrld.commonlib.util.MC;
 import com.customwrld.customlib.util.ServerUtil;
 import com.customwrld.customlib.util.WorldEditUtil;
 import com.customwrld.custompractice.CustomPractice;
@@ -27,6 +27,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -51,6 +53,8 @@ public class Duel {
     @Getter @Setter private State state;
 
     @Getter private Type type;
+
+    @Getter private List<Player> players;
 
     @Getter
     private UUID teamALeader;
@@ -82,6 +86,7 @@ public class Duel {
     public Duel(Arena arena, String kit, UUID uuid, boolean ranked, UUID teamALeader, UUID teamBLeader, Set<UUID> teamA, Set<UUID> teamB) {
         this.state = State.INIT;
         this.type = Type.NORMAL;
+        this.players = new ArrayList<>();
         this.spectators = new HashSet<>();
         this.arena = arena;
         this.kit = kit;
@@ -99,6 +104,7 @@ public class Duel {
     public Duel(Arena arena, String kit, UUID uuid, UUID teamALeader, Set<UUID> teamA) {
         this.state = State.INIT;
         this.type = Type.FFA;
+        this.players = new ArrayList<>();
         this.spectators = new HashSet<>();
         this.arena = arena;
         this.kit = kit;
@@ -110,7 +116,6 @@ public class Duel {
     }
 
     public void init() {
-        List<Player> players = new ArrayList<>();
         for (UUID uuid : teamA) {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
@@ -142,7 +147,7 @@ public class Duel {
             CustomPractice.getManagerHandler().getKitManager().applyKit(player, kit);
         }
 
-        if (CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isModifyTerrain()) {
+        if (CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isModifyTerrain() || CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isSpleef()) {
             CuboidRegion region = new CuboidRegion(BlockVector3.at(arena.getCuboid().getLowerNE().getBlockX(), arena.getCuboid().getLowerNE().getBlockY(), arena.getCuboid().getLowerNE().getBlockZ()),
                     BlockVector3.at(arena.getCuboid().getUpperSW().getBlockX(), arena.getCuboid().getUpperSW().getBlockY(), arena.getCuboid().getUpperSW().getBlockZ()));
             this.clipboard = new BlockArrayClipboard(region);
@@ -154,6 +159,19 @@ public class Duel {
             } catch (WorldEditException e) {
                 this.end(Result.DRAW, true);
                 e.printStackTrace();
+            }
+        }
+
+        if (CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isSumo()) {
+            for (Player player : players) {
+                AttributeInstance attributeSpeed = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+                if (attributeSpeed == null) {
+                    return;
+                }
+                System.out.println(attributeSpeed.getBaseValue());
+                System.out.println(player.getMaximumNoDamageTicks());
+                attributeSpeed.setBaseValue(32);
+                player.setMaximumNoDamageTicks(10);
             }
         }
 
@@ -297,6 +315,9 @@ public class Duel {
     }
 
     public void killPlayerTeamA(String name, UUID uuid, Player player, PracticePlayer practicePlayer, Player killer) {
+        if (state == State.ENDED) {
+            return;
+        }
         this.teamAAlive.remove(uuid);
         for (UUID uuid1 : teamA) {
             Player player1 = Bukkit.getPlayer(uuid1);
@@ -325,6 +346,9 @@ public class Duel {
     }
 
     public void killPlayerTeamB(String name, UUID uuid, Player player, PracticePlayer practicePlayer, Player killer) {
+        if (state == State.ENDED) {
+            return;
+        }
         this.teamBAlive.remove(uuid);
         //this.teamBAlive.remove(name, uuid);
         for (UUID uuid1 : teamA) {
@@ -434,6 +458,16 @@ public class Duel {
                 ItemUtil.setDefaultLoadout(player);
             }
         }
+        if (CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isSumo()) {
+            for (Player player : players) {
+                AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+                if (attribute == null) {
+                    return;
+                }
+                attribute.setBaseValue(4);
+                player.setMaximumNoDamageTicks(20);
+            }
+        }
         for (Entity entity : WorldUtil.WORLD.getEntities()) {
             if (!(entity instanceof Player)) {
                 if (arena.getCuboid().contains(entity)) {
@@ -442,10 +476,10 @@ public class Duel {
             }
         }
         /*
-        if (CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isModifyTerrain()) {
+        if (CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isModifyTerrain() || CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isSpleef()) {
             WorldEditUtil.pasteSchematic();
         }*/
-        if (clipboard != null && CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isModifyTerrain()) {
+        if (clipboard != null && CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isModifyTerrain() || CustomPractice.getManagerHandler().getKitManager().getKits().get(kit).isSpleef()) {
             try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(WorldUtil.WORLD), -1)) {
                 Operation operation = new ClipboardHolder(clipboard)
                         .createPaste(editSession)

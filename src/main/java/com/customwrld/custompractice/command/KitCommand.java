@@ -1,7 +1,7 @@
 package com.customwrld.custompractice.command;
 
 import com.customwrld.customlib.util.ItemFactory;
-import com.customwrld.customlib.util.MC;
+import com.customwrld.commonlib.util.MC;
 import com.customwrld.custompractice.CustomPractice;
 import com.customwrld.custompractice.kit.Kit;
 import com.customwrld.custompractice.managers.KitManager;
@@ -28,7 +28,9 @@ public class KitCommand {
                 .withSubcommand(setloadout)
                 .withSubcommand(listLocked)
                 .withSubcommand(lock)
-                .withSubcommand(unlock);
+                .withSubcommand(unlock)
+                .withSubcommand(sumo)
+                .withSubcommand(spleef);
     }
 
     public static CommandAPICommand create = new CommandAPICommand("create")
@@ -196,5 +198,43 @@ public class KitCommand {
                     }
                 }
                 sender.sendMessage(Component.text("Please enter a valid kit!").color(MC.CC.RED.getTextColor()));
+            });
+
+    public static CommandAPICommand sumo = new CommandAPICommand("sumo")
+            .withPermission("custompractice.admin")
+            .withArguments(new StringArgument("kit"))
+            .withArguments(new BooleanArgument("sumo"))
+            .executesPlayer((sender, args) -> {
+                KitManager kitManager = CustomPractice.getManagerHandler().getKitManager();
+                for (Kit kit : kitManager.getKits().values()) {
+                    if (kit.getName().equalsIgnoreCase((String) args[0])) {
+                        kit.setSumo((Boolean) args[1]);
+                        kitManager.save(kit);
+                        if (kit.isSumo()) {
+                            sender.sendMessage(Component.text("This kit is now a sumo kit.").color(MC.CC.GREEN.getTextColor()));
+                        } else {
+                            sender.sendMessage(Component.text("This kit is no longer a sumo kit.").color(MC.CC.RED.getTextColor()));
+                        }
+                    }
+                }
+            });
+
+    public static CommandAPICommand spleef = new CommandAPICommand("spleef")
+            .withPermission("custompractice.admin")
+            .withArguments(new StringArgument("kit"))
+            .withArguments(new BooleanArgument("spleef"))
+            .executesPlayer((sender, args) -> {
+                KitManager kitManager = CustomPractice.getManagerHandler().getKitManager();
+                for (Kit kit : kitManager.getKits().values()) {
+                    if (kit.getName().equalsIgnoreCase((String) args[0])) {
+                        kit.setSpleef((Boolean) args[1]);
+                        kitManager.save(kit);
+                        if (kit.isSpleef()) {
+                            sender.sendMessage(Component.text("This kit is now a spleef kit.").color(MC.CC.GREEN.getTextColor()));
+                        } else {
+                            sender.sendMessage(Component.text("This kit is no longer a spleef kit.").color(MC.CC.RED.getTextColor()));
+                        }
+                    }
+                }
             });
 }

@@ -63,6 +63,10 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>IntellectualSites</id>
+            <url>https://mvn.intellectualsites.com/content/repositories/releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -98,6 +102,24 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FAWE-Core</artifactId>
+            <version>1.17-15</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FAWE-Bukkit</artifactId>
+            <version>1.17-15</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>FAWE-Core</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.3.0-SNAPSHOT</version>
@@ -120,6 +142,13 @@
                 </exclusion>
             </exclusions>
             <scope>provided</scope>
+        </dependency-->
+        <dependency>
+            <groupId>net.minecraft</groupId>
+            <artifactId>NMS</artifactId>
+            <systemPath>${project.basedir}/libraries/NMS.jar</systemPath>
+            <version>LATEST</version>
+            <scope>system</scope>
         </dependency>
     </dependencies>
 </project>
