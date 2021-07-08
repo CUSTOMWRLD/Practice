@@ -22,11 +22,9 @@ import java.util.UUID;
 
 public class PracticePlayerManager extends Manager {
 
-    @Getter
-    private final Set<PracticePlayer> players;
+    @Getter private final Set<PracticePlayer> players;
 
-    @Getter
-    private final MongoCollection<Document> playerCollection;
+    @Getter private final MongoCollection<Document> playerCollection;
 
     public PracticePlayerManager(ManagerHandler handler) {
         super(handler);

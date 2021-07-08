@@ -3,6 +3,7 @@ package com.customwrld.custompractice.queue;
 import com.customwrld.commonlib.util.MC;
 import com.customwrld.custompractice.CustomPractice;
 import com.customwrld.custompractice.duel.Request;
+import com.customwrld.custompractice.event.Event;
 import com.customwrld.custompractice.kit.Kit;
 import com.customwrld.custompractice.player.PracticePlayer;
 import com.customwrld.custompractice.util.ItemUtil;
@@ -18,18 +19,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Queue {
 
-    @Getter
-    private final Kit kit;
+    @Getter private Kit kit;
 
-    @Getter
-    private final boolean ranked;
+    @Getter private Event event;
 
-    @Getter
-    private final List<PracticePlayer> playersInQueue;
+    @Getter private boolean ranked;
+
+    @Getter private final List<PracticePlayer> playersInQueue;
+
+    @Getter private final Type type;
 
     public Queue(Kit kit) {
+        this.type = Type.KIT;
         this.kit = kit;
         this.ranked = kit.isRanked();
+        this.playersInQueue = new CopyOnWriteArrayList<>();
+    }
+
+    public Queue(Event event) {
+        this.type = Type.EVENT;
+        this.event = event;
         this.playersInQueue = new CopyOnWriteArrayList<>();
     }
 
@@ -38,7 +47,11 @@ public class Queue {
         practicePlayer.setState(PracticePlayer.State.QUEUE);
         PlayerUtil.resetPlayer(player);
         ItemUtil.setQueueLoadout(player);
-        Objects.requireNonNull(Bukkit.getPlayer(practicePlayer.getUuid())).sendMessage(Component.text("You have been added to " + kit.getName() + " queue!").color(MC.CC.GREEN.getTextColor()));
+        if (type == Type.KIT) {
+            player.sendMessage(Component.text("You have been added to " + kit.getName() + " queue!").color(MC.CC.GREEN.getTextColor()));
+        } else if (type == Type.EVENT) {
+            player.sendMessage(Component.text("You have been added to " + event.getName() + " queue!").color(MC.CC.GREEN.getTextColor()));
+        }
     }
 
     public void removeFromQueue(PracticePlayer practicePlayer) {
@@ -46,6 +59,9 @@ public class Queue {
     }
 
     public void doNextFight() {
+        if (type != Type.KIT) {
+            return;
+        }
         if (playersInQueue.size() < 2) {
             return;
         }
@@ -54,6 +70,11 @@ public class Queue {
         CustomPractice.getManagerHandler().getDuelManager().startUnrankedDuel(playerA, playerB, new Request(kit.getName()));
         removeFromQueue(playerA);
         removeFromQueue(playerB);
+    }
+
+    public enum Type {
+        KIT,
+        EVENT
     }
 
 }

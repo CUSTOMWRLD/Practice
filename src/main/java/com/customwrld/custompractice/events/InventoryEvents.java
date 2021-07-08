@@ -30,6 +30,11 @@ public class InventoryEvents implements Listener {
     @EventHandler
     public void onSwapHands(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onSwapHands(event);
+            }
+        }
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         if (practicePlayer != null) {
             if (practicePlayer.getState() != PracticePlayer.State.FIGHTING && practicePlayer.getState() != PracticePlayer.State.EVENT) {
@@ -40,8 +45,12 @@ public class InventoryEvents implements Listener {
 
     @EventHandler
     public void onInventoryInteract(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player) {
-            Player player = (Player) event.getWhoClicked();
+        if (event.getWhoClicked() instanceof Player player) {
+            if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+                if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                    CustomPractice.getCustomPractice().getActiveEvent().onInventoryInteract(event);
+                }
+            }
             PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
             if (player.hasPermission("custompractice.admin") && player.getGameMode() == GameMode.CREATIVE) {
                 return;
@@ -57,6 +66,11 @@ public class InventoryEvents implements Listener {
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onDrop(event);
+            }
+        }
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         if (practicePlayer != null) {
             if (practicePlayer.getState() != PracticePlayer.State.FIGHTING && practicePlayer.getState() != PracticePlayer.State.EVENT) {
@@ -68,6 +82,11 @@ public class InventoryEvents implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onInteract(event);
+            }
+        }
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         ItemStack itemStack = event.getItem();
         if (itemStack == null) {

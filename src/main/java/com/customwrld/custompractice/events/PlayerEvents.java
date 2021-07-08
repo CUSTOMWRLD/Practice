@@ -53,6 +53,11 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onQuit(event);
+            }
+        }
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         DuelManager duelManager = CustomPractice.getManagerHandler().getDuelManager();
         if (duelManager.getActiveDuels().containsKey(duelManager.getPlayerToDuel().get(player.getUniqueId()))) {
@@ -93,6 +98,11 @@ public class PlayerEvents implements Listener {
     public void onDeath(PlayerDeathEvent event) {
         event.deathMessage(null);
         Player player = event.getEntity();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onDeath(event);
+            }
+        }
         Player killer = player.getKiller();
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         DuelManager duelManager = CustomPractice.getManagerHandler().getDuelManager();
@@ -112,6 +122,11 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onMove(event);
+            }
+        }
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         DuelManager duelManager = CustomPractice.getManagerHandler().getDuelManager();
         KitManager kitManager = CustomPractice.getManagerHandler().getKitManager();
@@ -158,6 +173,11 @@ public class PlayerEvents implements Listener {
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = ((Player) event.getEntity()).getPlayer();
+            if (CustomPractice.getCustomPractice().getActiveEvent() != null && player != null) {
+                if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                    CustomPractice.getCustomPractice().getActiveEvent().onDamage(event);
+                }
+            }
             PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
             /*
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
@@ -188,6 +208,11 @@ public class PlayerEvents implements Listener {
     public void onAttack(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = ((Player) event.getEntity()).getPlayer();
+            if (CustomPractice.getCustomPractice().getActiveEvent() != null && player != null) {
+                if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                    CustomPractice.getCustomPractice().getActiveEvent().onAttack(event);
+                }
+            }
             Player damager = null;
             if (event.getDamager() instanceof Player) {
                 damager = (Player) event.getDamager();
@@ -221,8 +246,12 @@ public class PlayerEvents implements Listener {
 
     @EventHandler
     public void onPickup(EntityPickupItemEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player player) {
+            if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+                if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                    CustomPractice.getCustomPractice().getActiveEvent().onPickup(event);
+                }
+            }
             PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
             if (practicePlayer != null) {
                 if (practicePlayer.getState() != PracticePlayer.State.FIGHTING && practicePlayer.getState() != PracticePlayer.State.EVENT) {
@@ -234,8 +263,12 @@ public class PlayerEvents implements Listener {
 
     @EventHandler
     public void onHungerLost(FoodLevelChangeEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player player) {
+            if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+                if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                    CustomPractice.getCustomPractice().getActiveEvent().onHungerLost(event);
+                }
+            }
             PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
             if (practicePlayer != null) {
                 if (practicePlayer.getState() != PracticePlayer.State.FIGHTING && practicePlayer.getState() != PracticePlayer.State.EVENT) {
@@ -248,6 +281,11 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onPostRespawn(PlayerPostRespawnEvent event) {
         Player player = event.getPlayer();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onPostRespawn(event);
+            }
+        }
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         if (practicePlayer != null) {
             if (practicePlayer.getState() == PracticePlayer.State.SPECTATING) {

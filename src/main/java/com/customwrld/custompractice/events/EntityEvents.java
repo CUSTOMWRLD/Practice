@@ -23,6 +23,11 @@ public class EntityEvents implements Listener {
 
         if (projectileSource instanceof Player) {
             Player player = ((Player) projectileSource).getPlayer();
+            if (CustomPractice.getCustomPractice().getActiveEvent() != null && player != null) {
+                if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                    CustomPractice.getCustomPractice().getActiveEvent().onProjectileHit(event);
+                }
+            }
             if (player == null) {
                 return;
             }

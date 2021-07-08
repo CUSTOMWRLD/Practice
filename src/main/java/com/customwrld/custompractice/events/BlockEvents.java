@@ -19,6 +19,11 @@ public class BlockEvents implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onBlockBreak(event);
+            }
+        }
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         if (practicePlayer == null) {
             event.setCancelled(true);
@@ -48,6 +53,11 @@ public class BlockEvents implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
+        if (CustomPractice.getCustomPractice().getActiveEvent() != null) {
+            if (CustomPractice.getCustomPractice().getActiveEvent().isInEvent(player)) {
+                CustomPractice.getCustomPractice().getActiveEvent().onBlockPlace(event);
+            }
+        }
         PracticePlayer practicePlayer = CustomPractice.getManagerHandler().getPracticePlayerManager().getPracticePlayer(player);
         if (practicePlayer == null) {
             event.setCancelled(true);
