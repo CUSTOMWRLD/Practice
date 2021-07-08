@@ -1,11 +1,4 @@
-name: CustomPractice
-version: ${project.version}
-main: com.customwrld.custompractice.CustomPractice
+name: ${artifactId}
+version: ${git.commit.id.abbrev}
+main: com.customwrld.custompractice.Practice
 api-version: 1.16
-authors: [ FreakingChicken ]
-description: Practice for CustomWRLD
-depend:
-  - CustomLib
-  - CommandAPI
-  - FastAsyncWorldEdit
-  - PlaceholderAPI
