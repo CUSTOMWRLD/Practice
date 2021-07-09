@@ -103,7 +103,7 @@ public class KitCommand extends Command {
     }
 
     private CommandAPICommand setIcon() {
-        return new CommandAPICommand("setIcon")
+        return new CommandAPICommand("seticon")
                 .withArguments(new StringArgument("kit"))
                 .executesPlayer((sender, args) -> {
                     KitManager kitManager = this.handler.getKitManager();
@@ -155,7 +155,7 @@ public class KitCommand extends Command {
     }
 
     private CommandAPICommand setLoadout() {
-        return new CommandAPICommand("setLoadout")
+        return new CommandAPICommand("setloadout")
                 .withArguments(new StringArgument("kit"))
                 .executesPlayer((sender, args) -> {
                     KitManager kitManager = this.handler.getKitManager();
@@ -170,7 +170,7 @@ public class KitCommand extends Command {
     }
 
     private CommandAPICommand listLocked() {
-        return new CommandAPICommand("listLocked")
+        return new CommandAPICommand("listlocked")
                 .executes((sender, args) -> {
                     KitManager kitManager = this.handler.getKitManager();
                     for (Kit kit : kitManager.getKits().values()) {

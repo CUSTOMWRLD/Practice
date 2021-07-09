@@ -180,7 +180,7 @@ public class ArenaManager extends Manager {
             }
         }
 
-        WorldUtil.pasteSchematicAt(WorldUtil.WORLD, Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("WorldEdit")).getDataFolder(), "schematics/" + arena.getName() +".schem", arena1.getCuboid().getLowerNE());
+        WorldUtil.pasteSchematicAt(WorldUtil.WORLD, Bukkit.getPluginManager().getPlugin("WorldEdit").getDataFolder(), "schematics/" + arena.getName() +".schem", arena1.getCuboid().getLowerNE());
 
         Practice.getPractice().getManagerHandler().getArenaManager().save(arena1);
         return arena1;

@@ -21,26 +21,29 @@ import java.io.IOException;
 public class ItemUtil {
 
     // Default Loadout START
-    public static ItemStack UNRANKED = new ItemFactory(Material.IRON_SWORD).setName(Component.text("Unranked").decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to join an unranked queue!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack RANKED = new ItemFactory(Material.DIAMOND_SWORD).setName(Component.text("Ranked", MC.CC.BLUE.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to join a ranked queue!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack CUSTOM = new ItemFactory(Material.GOLDEN_SWORD).setName(Component.text("Custom", MC.CC.GOLD.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to duel someone using a custom kit!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack STATS = new ItemFactory(Material.PLAYER_HEAD).setName(Component.text("Stats", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to view your stats!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack KIT_EDITOR = new ItemFactory(Material.BOOK).setName(Component.text("Kit Editor", MC.CC.GOLD.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to create a custom kit or edit an existing one!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack EVENT = new ItemFactory(Material.EMERALD).setName(Component.text("Event", MC.CC.GREEN.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to join an event!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack UNRANKED = new ItemFactory(Material.IRON_SWORD).setName(Component.text("Unranked").decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to join an unranked queue!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack RANKED = new ItemFactory(Material.DIAMOND_SWORD).setName(Component.text("Ranked", MC.CC.BLUE.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to join a ranked queue!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack CUSTOM = new ItemFactory(Material.GOLDEN_SWORD).setName(Component.text("Custom", MC.CC.GOLD.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to duel someone using a custom kit!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack STATS = new ItemFactory(Material.PLAYER_HEAD).setName(Component.text("Stats", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to view your stats!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack KIT_EDITOR = new ItemFactory(Material.BOOK).setName(Component.text("Kit Editor", MC.CC.GOLD.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to create a custom kit or edit an existing one!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack EVENT = new ItemFactory(Material.EMERALD).setName(Component.text("Event", MC.CC.GREEN.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to join an event!", MC.CC.GRAY.getTextColor())).build();
     // Default Loadout END
+
     // Party Loadout START
-    public static ItemStack PARTY_FFA = new ItemFactory(Material.IRON_SWORD).setName(Component.text("Party Fight", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to start a teams or FFA duel with your party!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack PARTY_FIGHT = new ItemFactory(Material.NETHERITE_SWORD).setName(Component.text("Fight Other Parties", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to duel another party!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack PARTY_EVENT = new ItemFactory(Material.EMERALD).setName(Component.text("Party Event", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to start an event with your party!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack PARTY_INFO = new ItemFactory(Material.PAPER).setName(Component.text("Party Info", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to view info about this party!", MC.CC.GRAY.getTextColor())).build();
-    public static ItemStack LEAVE_PARTY = new ItemFactory(Material.BARRIER).setName(Component.text("Leave Party", MC.CC.RED.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to leave this party!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack PARTY_FFA = new ItemFactory(Material.IRON_SWORD).setName(Component.text("Party Fight", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to start a teams or FFA duel with your party!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack PARTY_FIGHT = new ItemFactory(Material.NETHERITE_SWORD).setName(Component.text("Fight Other Parties", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to duel another party!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack PARTY_EVENT = new ItemFactory(Material.EMERALD).setName(Component.text("Party Event", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to start an event with your party!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack PARTY_INFO = new ItemFactory(Material.PAPER).setName(Component.text("Party Info", MC.CC.LIGHT_PURPLE.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to view info about this party!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack LEAVE_PARTY = new ItemFactory(Material.BARRIER).setName(Component.text("Leave Party", MC.CC.RED.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to leave this party!", MC.CC.GRAY.getTextColor())).build();
     // Party Loadout END
+
     // Spectator Loadout START
     //public static ItemStack LEAVE_SPECTATING = new ItemFactory(Material.BARRIER).setName(CC.BOLD + CC.RED + "Leave Spectator Mode").setLore(Component.text("Right click to leave spectator mode!").build();
-    public static ItemStack LEAVE_SPECTATING = new ItemFactory(Material.BARRIER).setName(Component.text("Leave Spectator Mode", MC.CC.RED.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to leave spectator mode!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack LEAVE_SPECTATING = new ItemFactory(Material.BARRIER).setName(Component.text("Leave Spectator Mode", MC.CC.RED.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to leave spectator mode!", MC.CC.GRAY.getTextColor())).build();
     // Spectator Loadout END
+
     // Queue Loadout START
-    public static ItemStack LEAVE_QUEUE = new ItemFactory(Material.BARRIER).setName(Component.text("Leave Queue", MC.CC.RED.getTextColor()).decoration(TextDecoration.BOLD, true).asComponent()).setLore(Component.text("Right click to leave the queue!", MC.CC.GRAY.getTextColor())).build();
+    public static ItemStack LEAVE_QUEUE = new ItemFactory(Material.BARRIER).setName(Component.text("Leave Queue", MC.CC.RED.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to leave the queue!", MC.CC.GRAY.getTextColor())).build();
     // Queue Loadout END
 
     public static void setDefaultLoadout(Player player) {
