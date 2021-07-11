@@ -122,6 +122,11 @@ public class InventoryEvents implements Listener {
                         //TODO Open stats gui
                     }
 
+                    if (InventoryUtil.isSimilar(itemStack, ItemUtil.EVENT) && event.getHand() == EquipmentSlot.HAND) {
+                        event.setCancelled(true);
+                        //TODO Events
+                    }
+
                     if (InventoryUtil.isSimilar(itemStack, ItemUtil.LEAVE_QUEUE) && event.getHand() == EquipmentSlot.HAND) {
                         event.setCancelled(true);
                         Queue queue = Practice.getPractice().getManagerHandler().getQueueManager().getQueue(practicePlayer);

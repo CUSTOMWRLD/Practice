@@ -46,6 +46,10 @@ public class ItemUtil {
     public static ItemStack LEAVE_QUEUE = new ItemFactory(Material.BARRIER).setName(Component.text("Leave Queue", MC.CC.RED.getTextColor()).decoration(TextDecoration.BOLD, true)).setLore(Component.text("Right click to leave the queue!", MC.CC.GRAY.getTextColor())).build();
     // Queue Loadout END
 
+    // Misc START
+    public static ItemStack EVENT_PLACEHOLDER = new ItemFactory(Material.EMERALD).build();
+    // Misc END
+
     public static void setDefaultLoadout(Player player) {
         Inventory inventory = player.getInventory();
         inventory.setItem(0, UNRANKED);

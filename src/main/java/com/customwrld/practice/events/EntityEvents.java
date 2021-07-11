@@ -8,6 +8,7 @@ import com.customwrld.practice.player.PracticePlayer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -36,7 +37,7 @@ public class EntityEvents implements Listener {
             }
             DuelManager duelManager = Practice.getPractice().getManagerHandler().getDuelManager();
             KitManager kitManager = Practice.getPractice().getManagerHandler().getKitManager();
-            if (event.getHitBlock() != null) {
+            if (event.getHitBlock() != null && projectile instanceof Snowball) {
                 if (duelManager.getActiveDuels().containsKey(duelManager.getPlayerToDuel().get(player.getUniqueId()))) {
                     Duel duel = duelManager.getActiveDuels().get(duelManager.getPlayerToDuel().get(player.getUniqueId()));
                     if (kitManager.getKits().get(duel.getKit()).isSpleef() && event.getHitBlock().getType() == Material.SNOW_BLOCK) {

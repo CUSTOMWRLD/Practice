@@ -6,4 +6,6 @@ public class FFAEvent extends Event {
     public FFAEvent() {
         super("FFA");
     }
+
+
 }
